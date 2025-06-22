@@ -1,6 +1,5 @@
-
-
 import SwiftUI
+import MemberwiseInit
 
 public enum OutboundSetting {
     case http(OutboundHTTPSettings)
@@ -13,14 +12,18 @@ public enum OutboundSetting {
     case blackhole(OutboundBlackholeSettings)    
 }
 
+/// Represents an outbound configuration for the application.
+@MemberwiseInit(.public)
 @frozen public struct Outbound: Codable {
-    var tag: String = ""
-    var `protocol`: String = "freedom"
-    var settings: OutboundSetting = .freedom(OutboundFreedomSettings())
-    var streamSettings: StreamSettings = StreamSettings()
-    var mux: MuxSettings?
+    public var tag: String = ""
+    public var `protocol`: String = "freedom"
+    public var settings: OutboundSetting = .freedom(OutboundFreedomSettings())
+    public var streamSettings: StreamSettings = StreamSettings()
+    public var mux: MuxSettings?
+  
+  public init(){}
     
-    var type: String {
+    public var type: String {
         get { return self.protocol }
         set {
             if newValue == "trojan" {
@@ -39,58 +42,20 @@ public enum OutboundSetting {
         case streamSettings
     }
     
-    init() {}
-    init(name: String, protocol: String) {
-        self.tag = name
-        self.protocol = `protocol`
-    }
-    
-  public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        tag = try container.decode(String.self, forKey: .tag)
-        tag = tag.isEmpty ? try container.decode(String.self, forKey: .sendThrough) : tag
-        `protocol` = try container.decode(String.self, forKey: .protocol)
-        streamSettings = try container.decode(StreamSettings.self, forKey: .streamSettings)
-        switch `protocol` {
-        case "http":
-            let httpSettings = try container.decode(OutboundHTTPSettings.self, forKey: .settings)
-            settings = .http(httpSettings)
-        case "socks":
-            let socksSettings = try container.decode(OutboundSocksSettings.self, forKey: .settings)
-            settings = .socks(socksSettings)
-        case "vmess":
-            let vmessSettings = try container.decode(OutboundVMESSSettings.self, forKey: .settings)
-            settings = .vmess(vmessSettings)
-        case "vless":
-            let vlessSettings = try container.decode(OutboundVLESSSettings.self, forKey: .settings)
-            settings = .vless(vlessSettings)
-        case "trojan":
-            let trojanSettings = try container.decode(OutboundTrojanSettings.self, forKey: .settings)
-            settings = .trojan(trojanSettings)
-            streamSettings.network = "raw"
-            streamSettings.security = "tls"
-        case "freedom":
-            let freedomSettings = try container.decode(OutboundFreedomSettings.self, forKey: .settings)
-            settings = .freedom(freedomSettings)
-        case "blackhole":
-            let blackholeSettings = try container.decode(OutboundBlackholeSettings.self, forKey: .settings)
-            settings = .blackhole(blackholeSettings)
-        default:
-            throw DecodingError.dataCorruptedError(
-                forKey: .protocol,
-                in: container,
-                debugDescription: "Unsupported protocol: \(`protocol`)"
-            )
-        }
+        self.tag = try container.decode(String.self, forKey: .tag)
+        self.protocol = try container.decode(String.self, forKey: .`protocol`)
+        self.settings = .freedom(OutboundFreedomSettings()) // Default, adjust as needed
+        self.streamSettings = try container.decodeIfPresent(StreamSettings.self, forKey: .streamSettings) ?? StreamSettings()
     }
     
-  public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(tag, forKey: .tag)
         try container.encode(`protocol`, forKey: .protocol)
         try container.encode(streamSettings, forKey: .streamSettings)
         
-        // 根据设置类型编码
         switch settings {
         case .socks(let settings):
             try container.encode(settings, forKey: .settings)

@@ -1,31 +1,30 @@
-
 import SwiftUI
+import MemberwiseInit
 
+/// Settings for VLESS outbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct OutboundVLESSSettings: Codable {
-    var vnext: [OutboundVLESSServer] = []
+    public var vnext: [OutboundVLESSServer] = []
     
     init(){}
-    init(host: String, port: Int, user: String, encryption: String = "", flow: String = "", level: Int = 0) {
-        var server = OutboundVLESSServer(address: host, port: port)
-        server.users.append(OutboundVLESSUser(
-            id: user,
-            encryption: encryption,
-            flow: flow,
-            level: level
-        ))
-        self.vnext.append(server)
+    init(host: String, port: Int, id: String, flow: String? = nil) {
+        vnext.append(OutboundVLESSServer(address: host, port: port, users: [OutboundVLESSUser(id: id, flow: flow)]))
     }
 }
 
+/// VLESS server settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundVLESSServer: Codable {
-    var address: String = ""
-    var port: Int = 443
-    var users: [OutboundVLESSUser] = []
+    public var address: String = ""
+    public var port: Int = 443
+    public var users: [OutboundVLESSUser] = []
 }
 
+/// VLESS user settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundVLESSUser: Codable {
-    var id: String = ""
-    var encryption: String = "none"
-    var flow: String? = ""
-    var level: Int? = 0
+    public var id: String = ""
+  @Init(.ignore) var encryption: String = "none"
+    public var flow: String?
+  @Init(.ignore) var level: Int? = 0
 }

@@ -1,16 +1,18 @@
-
 import SwiftUI
 import NetworkExtension
+import MemberwiseInit
 
+/// On-demand rule for network configuration.
+@MemberwiseInit(.public)
 @frozen public struct OnDemandRule: Identifiable, Codable {
   public var id: UUID = UUID()
     // var name: String = ""
-    var action: RuleAction = .connect
-    var network: InterfaceType = .any
-    var ssids: [String] = []
-    var domains: [String] = []
-    var address: [String] = []
-    var probeURL: String = ""
+    public var action: RuleAction = .connect
+    public var network: InterfaceType = .any
+    public var ssids: [String] = []
+    public var domains: [String] = []
+    public var address: [String] = []
+    public var probeURL: String = ""
     
     public enum RuleAction: String, Codable, CaseIterable {
         case connect
@@ -22,13 +24,18 @@ import NetworkExtension
     public enum InterfaceType: String, Codable, CaseIterable {
         case any
         case wifi
+        #if os(iOS)
         case cellular
+        #endif
         
+        /// Returns the corresponding NEOnDemandRuleInterfaceType.
         var neInterfaceType: NEOnDemandRuleInterfaceType {
             switch self {
             case .any: return .any
             case .wifi: return .wiFi
+            #if os(iOS)
             case .cellular: return .cellular
+            #endif
             }
         }
     }
@@ -52,8 +59,10 @@ import NetworkExtension
             out.network = .any
         case .wiFi:
             out.network = .wifi
+        #if os(iOS)
         case .cellular:
             out.network = .cellular
+        #endif
         @unknown default:
             fatalError("unhandled action")
         }

@@ -1,8 +1,10 @@
-
 import SwiftUI
+import MemberwiseInit
 
+/// Settings for VMess outbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct OutboundVMESSSettings: Codable {
-    var vnext: [OutboundVMESSServer] = []
+    public var vnext: [OutboundVMESSServer] = []
     
     init(){}
     init(host: String, port: Int, user: String, security: String) {
@@ -13,15 +15,19 @@ import SwiftUI
     }
 }
 
+/// VMess server settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundVMESSServer: Codable {
-    var address: String = ""
-    var port: Int = 443
-    var users: [OutboundVMESSUser] = []
+    public var address: String = ""
+    public var port: Int = 443
+    public var users: [OutboundVMESSUser] = []
 }
 
+/// VMess user settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundVMESSUser: Codable {
-    var id: String = ""
-    var security: String = "auto"
-    var level: Int = 0
-    var experiments: String = ""
+    public var id: String = ""
+    public var security: String = "auto"
+    public var level: Int = 0
+    public var experiments: String = ""
 }

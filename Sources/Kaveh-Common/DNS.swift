@@ -1,4 +1,5 @@
 import Foundation.NSCoder
+import MemberwiseInit
 
 // DNS Server configuration
 @frozen public struct DNSServer: Codable {
@@ -82,16 +83,17 @@ public enum HostMapping: Codable {
     }
 }
 
-// Main DNS configuration
+/// Main DNS configuration for the application.
+@MemberwiseInit
 @frozen public struct DNS: Codable {
-    var tag: String = ""
-    var queryStrategy: String = ""
-    var servers: [DNSServerType] = []
-    var hosts: [String: HostMapping] = [:]
-    var clientIP: String?
-    var disableCache: Bool?
-    var disableFallback: Bool?
-    var disableFallbackIfMatch: Bool?
+    public var tag: String = ""
+    public var queryStrategy: String = ""
+    public var servers: [DNSServerType] = []
+    public var hosts: [String: HostMapping] = [:]
+    public var clientIP: String?
+    public var disableCache: Bool?
+    public var disableFallback: Bool?
+    public var disableFallbackIfMatch: Bool?
     
     enum CodingKeys: String, CodingKey {
         case servers, hosts, clientIP, queryStrategy

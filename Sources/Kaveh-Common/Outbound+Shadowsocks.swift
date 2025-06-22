@@ -1,20 +1,33 @@
+import MemberwiseInit
 
-
+/// Settings for Shadowsocks outbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct OutboundShadowsocksSettings: Codable {
-    var servers: [OutboundShadowsocksServer] = []
+    public var servers: [OutboundShadowsocksServer] = []
     
     init(){}
     init(host: String, port: Int, pass: String, method: String){
-        servers.append(OutboundShadowsocksServer(address: host, port: port, password: pass, method: method))
+      servers
+        .append(
+          OutboundShadowsocksServer(
+            address: host,
+            port: port,
+            email: nil,
+            password: pass,
+            method: method
+          )
+        )
     }
 }
 
+/// Shadowsocks server settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundShadowsocksServer: Codable {
-    var address: String = ""
-    var port: Int = 1234
-    var email: String?
-    var password: String = ""
-    var method: String = ""
-    var uot: Bool = true
-    var level: Int = 0
+    public var address: String = ""
+    public var port: Int = 1234
+    public var email: String?
+    public var password: String = ""
+    public var method: String = ""
+    public var uot: Bool = true
+    public var level: Int = 0
 }

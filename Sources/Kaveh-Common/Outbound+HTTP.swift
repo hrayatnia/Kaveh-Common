@@ -1,10 +1,12 @@
+import MemberwiseInit
 
-
+/// Settings for HTTP outbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct OutboundHTTPSettings: Codable {
-    var servers: [OutboundHTTPServer] = []
+    public var servers: [OutboundHTTPServer] = []
     
     init(){}
-    init(host: String, port: Int = 443, user: String, pass: String) {
+    public init(host: String, port: Int = 443, user: String, pass: String) {
         var server = OutboundHTTPServer(address: host, port: port)
         let user = OutboundHTTPUser(user: user, pass: pass)
         server.users.append(user)
@@ -12,13 +14,17 @@
     }
 }
 
+/// HTTP server settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundHTTPServer: Codable {
-    var address: String = ""
-    var port: Int = 8080
-    var users: [OutboundHTTPUser] = []
+    public var address: String = ""
+    public var port: Int = 8080
+    public var users: [OutboundHTTPUser] = []
 }
 
+/// HTTP user settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundHTTPUser: Codable {
-    var user: String = ""
-    var pass: String = ""
+    public var user: String = ""
+    public var pass: String = ""
 }

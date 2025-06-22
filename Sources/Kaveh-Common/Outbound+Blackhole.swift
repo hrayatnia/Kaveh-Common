@@ -1,14 +1,18 @@
+import MemberwiseInit
 
-
+/// Settings for Blackhole outbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct OutboundBlackholeSettings: Codable {
-    var response: OutboundBlackholeResponse?
+    public var response: OutboundBlackholeResponse?
     
-    init(responseType: String) {
+    public init(responseType: String) {
         response = OutboundBlackholeResponse()
         response!.type = responseType
     }
 }
 
+/// Blackhole response settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundBlackholeResponse: Codable {
-    var type: String = "none"
+    public var type: String = "none"
 }

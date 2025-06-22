@@ -1,12 +1,16 @@
+import MemberwiseInit
 
-
+/// Settings for HTTP inbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct InboundHTTPSettings: Codable {
-    var allowTransparent: Bool = false
-    var userLevel: Int = 0
-    var accounts: [InboundHTTPAccount] = []
+    public var allowTransparent: Bool = false
+    public var userLevel: Int = 0
+    public var accounts: [InboundHTTPAccount] = []
 }
 
+/// HTTP account settings.
+@MemberwiseInit(.public)
 @frozen public struct InboundHTTPAccount: Codable {
-    var user: String = ""
-    var pass: String = ""
+    public var user: String = ""
+    public var pass: String = ""
 }

@@ -1,24 +1,26 @@
-
 import SwiftUI
+import MemberwiseInit
 
+/// Routing rule for traffic.
+@MemberwiseInit(.public)
 @frozen public struct Rule: Hashable, Codable, Equatable {
-    var type: String = "field"
-    var ruleTag: String = ""
-    var domainMatcher: String = ""
-    var domain: [String] = []
-    var ip: [String] = []
-    var port: String = ""
-    var sourcePort: String = ""
-    var source: [String] = []
-    var user: [String] = []
-    var inboundTag: [String] = []
-    var `protocol`: [String] = []
-    var attrs: [String: String] = [:]
-    var outboundTag: String = ""
-    var balancerTag: String = ""
-    var network: String = ""
+    public var type: String = "field"
+    public var ruleTag: String = ""
+    public var domainMatcher: String = ""
+    public var domain: [String] = []
+    public var ip: [String] = []
+    public var port: String = ""
+    public var sourcePort: String = ""
+    public var source: [String] = []
+    public var user: [String] = []
+    public var inboundTag: [String] = []
+    public var `protocol`: [String] = []
+    public var attrs: [String: String] = [:]
+    public var outboundTag: String = ""
+    public var balancerTag: String = ""
+    public var network: String = ""
     
-    var networks: [String] {
+    public var networks: [String] {
         get {
             return self.network.split(separator: ",").map(String.init)
         }
@@ -33,7 +35,7 @@ import SwiftUI
         case `protocol`, attrs, outboundTag, balancerTag
         case ruleTag, network
     }
-    init(){}
+    public init(){}
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         type = try container.decodeIfPresent(String.self, forKey: .type) ?? "field"
@@ -120,11 +122,13 @@ import SwiftUI
     }
 }
 
+/// Routing configuration for the application.
+@MemberwiseInit(.public)
 @frozen public struct Routing: Codable {
-    var domainStrategy: String = "AsIs"
-    var domainMatcher: String = "hybrid"
-    var balancers: [Balancer] = []
-    var rules: [Rule] = [
+    public var domainStrategy: String = "AsIs"
+    public var domainMatcher: String = "hybrid"
+    public var balancers: [Balancer] = []
+    public var rules: [Rule] = [
         Rule.china_ip_direct,
         Rule.china_domain_direct,
         Rule.match_all
@@ -142,13 +146,15 @@ import SwiftUI
   public init(){}
 }
 
+/// Balancer configuration for routing.
+@MemberwiseInit(.public)
 @frozen public struct Balancer: Codable {
-    var tag: String = ""
-    var selector: [String] = []
-    var fallbackTag: String = ""
-    var strategy: BalancerStrategy = BalancerStrategy()
+    public var tag: String = ""
+    public var selector: [String] = []
+    public var fallbackTag: String = ""
+    public var strategy: BalancerStrategy = BalancerStrategy()
     
-    static var proxy: Balancer {
+    public static var proxy: Balancer {
         return Balancer(
             tag: "proxy",
             selector: ["^((?!direct|block).)*$"],
@@ -157,9 +163,11 @@ import SwiftUI
     }
 }
 
+/// Strategy for a balancer.
+@MemberwiseInit(.public)
 @frozen public struct BalancerStrategy: Codable {
-    var type: String = ""
-    var settings: BalancerStrategySettings?
+    public var type: String = ""
+    public var settings: BalancerStrategySettings?
   
   public init(){}
   
@@ -171,16 +179,20 @@ import SwiftUI
   }
 }
 
+/// Settings for a balancer strategy.
+@MemberwiseInit(.public)
 @frozen public struct BalancerStrategySettings: Codable {
-    var expected: Int = 2
-    var maxRTT: String = ""
-    var tolerance: Double = 0.01
-    var baselines: [String] = ["1s"]
-    var costs: [CostObject] = []
+    public var expected: Int = 2
+    public var maxRTT: String = ""
+    public var tolerance: Double = 0.01
+    public var baselines: [String] = ["1s"]
+    public var costs: [CostObject] = []
 }
 
+/// Cost object for routing decisions.
+@MemberwiseInit(.public)
 @frozen public struct CostObject: Codable {
-    var regexp: Bool = false
-    var match: String = ""
-    var value: Double = 0.5
+    public var regexp: Bool = false
+    public var match: String = ""
+    public var value: Double = 0.5
 }

@@ -1,13 +1,15 @@
+import MemberwiseInit
 
-
+/// Settings for Dokodemo inbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct InboundDokodemoSettings: Codable {
-    var address: String = "127.0.0.1"
-    var port: Int = 0
-    var network: String = "tcp"
-    var followRedirect: Bool = false
-    var userLevel: Int = 0
+    public var address: String = "127.0.0.1"
+    public var port: Int = 0
+    public var network: String = "tcp"
+    public var followRedirect: Bool = false
+    public var userLevel: Int = 0
     
-    var networks: [String] {
+    public var networks: [String] {
         set {
             self.network = newValue.joined(separator: ",")
         }
@@ -23,8 +25,7 @@
         case followRedirect
         case userLevel
     }
-    init(){}
-  public init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         address = try container.decode(String.self, forKey: .address)
         port = try container.decodeIfPresent(Int.self, forKey: .port) ?? 0
@@ -33,7 +34,7 @@
         userLevel = try container.decodeIfPresent(Int.self, forKey: .userLevel) ?? 0
     }
     
-  public func encode(to encoder: any Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(address, forKey: .address)
         if port != 0 {

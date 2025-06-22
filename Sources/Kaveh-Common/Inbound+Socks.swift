@@ -1,12 +1,13 @@
+import MemberwiseInit
 
-
+/// Settings for Socks inbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct InboundSocksSettings: Codable {
-    var udp: Bool = false
-    var ip: String = ""
+    public var udp: Bool = false
+    public var ip: String = ""
     
     enum CodingKeys: CodingKey {
-        case udp
-        case ip
+        case udp, ip
     }
     public init(udp: Bool = false) {
         self.udp = udp

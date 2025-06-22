@@ -1,5 +1,6 @@
 import SwiftUI
 import Foundation
+import MemberwiseInit
 
 public enum InboundSetting {
     case http(InboundHTTPSettings)
@@ -11,13 +12,15 @@ public enum InboundSetting {
     // case shadowsocks(InboundShadowsocksSettings)
 }
 
+/// Represents an inbound configuration for the application.
+@MemberwiseInit(.public)
 @frozen public struct Inbound: Codable {
-    var tag: String = ""
-    var `protocol`: String = "socks"
-    var listen: String = "127.0.0.1"
-    var port: Int = 1080
-    var settings: InboundSetting = .socks(InboundSocksSettings())
-    var sniffing: SniffingSettings?
+    public var tag: String = ""
+    public var `protocol`: String = "socks"
+    public var listen: String = "127.0.0.1"
+    public var port: Int = 1080
+    public var settings: InboundSetting = .socks(InboundSocksSettings())
+    public var sniffing: SniffingSettings?
     
     private enum CodingKeys: String, CodingKey {
         case tag
@@ -26,9 +29,10 @@ public enum InboundSetting {
         case port
         case settings
     }
+  
+  public init(){}
     
-    init(){}
-  public init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.tag = try container.decode(String.self, forKey: .tag)
         self.listen = try container.decode(String.self, forKey: .listen)
@@ -48,15 +52,11 @@ public enum InboundSetting {
             let trojanSetting = try container.decode(InboundTrojanSettings.self, forKey: .settings)
             self.settings = .trojan(trojanSetting)
         default:
-            throw DecodingError.dataCorruptedError(
-                forKey: .protocol,
-                in: container,
-                debugDescription: "Unsupported protocol: \(`protocol`)"
-            )
+            self.settings = .socks(InboundSocksSettings())
         }
     }
     
-  public func encode(to encoder: any Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.tag, forKey: .tag)
         try container.encode(self.listen, forKey: .listen)

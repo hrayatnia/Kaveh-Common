@@ -1,10 +1,12 @@
+import MemberwiseInit
 
-
+/// Settings for Trojan outbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct OutboundTrojanSettings: Codable {
-    var servers: [OutboundTrojanServer] = []
+    public var servers: [OutboundTrojanServer] = []
     
     init(){}
-    init(host: String, port: Int = 443, password: String) {
+    public init(host: String, port: Int = 443, password: String) {
         var server = OutboundTrojanServer()
         server.address = host
         server.port = port
@@ -13,8 +15,10 @@
     }
 }
 
+/// Trojan server settings.
+@MemberwiseInit(.public)
 @frozen public struct OutboundTrojanServer: Codable {
-    var address: String = ""
-    var port: Int = 443
-    var password: String = ""
+    public var address: String = ""
+    public var port: Int = 443
+    public var password: String = ""
 }

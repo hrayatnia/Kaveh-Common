@@ -1,34 +1,44 @@
 import Foundation.NSCoder
 import UniformTypeIdentifiers.UTAdditions
 import SwiftUI
+import MemberwiseInit
 
-
+/// Log configuration for the application.
+@MemberwiseInit(.public)
 @frozen public struct Log: Codable {
-    var access: String = "\(Common.accessLogPath)"
-    var error: String = "\(Common.errorLogPath)"
-    var loglevel: String = "warning"
+    public var access: String = "\(Common.accessLogPath)"
+    public var error: String = "\(Common.errorLogPath)"
+    public var loglevel: String = "warning"
 }
 
-@frozen public struct Stats: Codable {
-    
-}
+/// Statistics configuration.
+@MemberwiseInit(.public)
+@frozen public struct Stats: Codable {}
 
+/// API configuration.
+@MemberwiseInit(.public)
 @frozen public struct API: Codable {
-    var tag: String = ""
-    var services: [String]  = []
+    public var tag: String = ""
+    public var services: [String]  = []
 }
 
+/// Policy configuration.
+@MemberwiseInit(.public)
 @frozen public struct Policy: Codable {
-    var system: PolicySystem?
+    public var system: PolicySystem?
+  
+  public init() {}
 }
 
+/// System-level policy configuration.
+@MemberwiseInit(.public)
 @frozen public struct PolicySystem: Codable {
-    var statsInboundUplink: Bool = false
-    var statsInboundDownlink: Bool = false
-    var statsOutboundUplink: Bool = false
-    var statsOutboundDownlink: Bool = false
+    public var statsInboundUplink: Bool = false
+    public var statsInboundDownlink: Bool = false
+    public var statsOutboundUplink: Bool = false
+    public var statsOutboundDownlink: Bool = false
     
-    static var enableAll: PolicySystem {
+    public static var enableAll: PolicySystem {
         return PolicySystem(
             statsInboundUplink: true,
             statsInboundDownlink: true,
@@ -38,20 +48,24 @@ import SwiftUI
     }
 }
 
+/// Metrics configuration.
+@MemberwiseInit(.public)
 @frozen public struct Metrics: Codable {
-    var tag: String = "metrics-service"
+    public var tag: String = "metrics-service"
 }
 
+/// Main configuration for the application.
+@MemberwiseInit(.public)
 @frozen public struct Config: Codable {
-    var log: Log?
-    var api: API?
-    var dns: DNS? = DNS.demo
-    var stats: Stats?
-    var metrics: Metrics?
-    var policy: Policy?
-    var routing: Routing = Routing()
-    var inbounds: [Inbound] = [Inbound.socks]
-    var outbounds: [Outbound] = [
+    public var log: Log?
+    public var api: API?
+    public var dns: DNS? = DNS.demo
+    public var stats: Stats?
+    public var metrics: Metrics?
+    public var policy: Policy?
+    public var routing: Routing = Routing()
+    public var inbounds: [Inbound] = [Inbound.socks]
+    public var outbounds: [Outbound] = [
         Outbound.direct,
         Outbound.block,
     ]
@@ -72,30 +86,20 @@ import SwiftUI
   public init(){}
 }
 
+/// Stream settings for outbound connections.
+@MemberwiseInit(.public)
 @frozen public struct StreamSettings: Codable {
-    var network: String = "raw"
-    var security: String = "none"
-    var rawSettings: RawSettings = RawSettings()
-    var tlsSettings: TLSSettings = TLSSettings()
-    var realitySettings: RealitySetting = RealitySetting()
-    var wsSettings: WebSocketSettings = WebSocketSettings()
-    var httpUpgradeSettings: HTTPUpgradeSettings = HTTPUpgradeSettings()
-    
-    // xhttpSettings
-    // kcpSettings
-    // grpcSettings
-     
+    public var network: String = "raw"
+    public var security: String = "none"
+    public var rawSettings: RawSettings = RawSettings()
+    public var tlsSettings: TLSSettings = TLSSettings()
+    public var realitySettings: RealitySetting = RealitySetting()
+    public var wsSettings: WebSocketSettings = WebSocketSettings()
+    public var httpUpgradeSettings: HTTPUpgradeSettings = HTTPUpgradeSettings()
     private enum CodingKeys: String, CodingKey {
-        case network
-        case security
-        case rawSettings
-        case tlsSettings
-        case wsSettings
-        case httpUpgradeSettings
-        case realitySettings
+        case network, security, rawSettings, tlsSettings, wsSettings, httpUpgradeSettings, realitySettings
     }
-  public init(){}
-  public init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         network = try container.decode(String.self, forKey: .network)
         security = try container.decode(String.self, forKey: .security)
@@ -105,8 +109,7 @@ import SwiftUI
         if security == "tls" { tlsSettings = try container.decode(TLSSettings.self, forKey: .tlsSettings) }
         if security == "reality" { realitySettings = try container.decode(RealitySetting.self, forKey: .realitySettings) }
     }
-    
-  public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(network, forKey: .network)
         try container.encode(security, forKey: .security)
@@ -116,85 +119,78 @@ import SwiftUI
         if security == "tls" { try container.encode(tlsSettings, forKey: .tlsSettings) }
         if security == "reality" { try container.encode(realitySettings, forKey: .realitySettings) }
     }
-    
 }
 
+/// Raw stream settings.
 @frozen public struct RawSettings: Codable {
-    
-  public init(from decoder: any Decoder) throws {
-  }
-  public init () {
-    
-  }
+    public init(from decoder: any Decoder) throws {}
+    public init () {}
 }
 
+/// Reality protocol settings.
+@MemberwiseInit(.public)
 @frozen public struct RealitySetting: Codable {
-    var show: Bool = false
-    var target: String = ""
-    var xver: Int = 0
-    var serverNames: [String] = []
-    var privateKey: String = ""
-    var minClientVer: String = ""
-    var maxClientVer: String = ""
-    var shortIds: [String] = []
-    var fingerprint: String = ""
-    var serverName: String = ""
-    var publicKey: String = ""
-    var shortId: String = ""
-    var spiderX: String = ""
-  
-  public init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.show = try container.decode(Bool.self, forKey: .show)
-    self.target = try container.decode(String.self, forKey: .target)
-    self.xver = try container.decode(Int.self, forKey: .xver)
-    self.serverNames = try container.decode([String].self, forKey: .serverNames)
-    self.privateKey = try container.decode(String.self, forKey: .privateKey)
-    self.minClientVer = try container.decode(String.self, forKey: .minClientVer)
-    self.maxClientVer = try container.decode(String.self, forKey: .maxClientVer)
-    self.shortIds = try container.decode([String].self, forKey: .shortIds)
-    self.fingerprint = try container.decode(String.self, forKey: .fingerprint)
-    self.serverName = try container.decode(String.self, forKey: .serverName)
-    self.publicKey = try container.decode(String.self, forKey: .publicKey)
-    self.shortId = try container.decode(String.self, forKey: .shortId)
-    self.spiderX = try container.decode(String.self, forKey: .spiderX)
-  }
-  
-  public init(){}
-}
-
-@frozen public struct TLSSettings: Codable {
-    var serverName: String = ""
-    var rejectUnknownSni: Bool = false
-    var allowInsecure: Bool = false
-    var alpn: [String] = []
-    var minVersion: String = ""
-    var maxVersion: String = ""
-    var cipherSuites: String = ""
-    var certificates: [String] = []
-    var disableSystemRoot: Bool = false
-    var enableSessionResumption: Bool = false
-    var fingerprint: String = ""
-    var pinnedPeerCertificateChainSha256: [String] = []
-    var curvePreferences: [String] = []
-    var masterKeyLog: String = ""
-    
-    private enum CodingKeys: String, CodingKey {
-        case serverName
-        case allowInsecure
-        case alpn
-        case fingerprint
+    public var show: Bool = false
+    public var target: String = ""
+    public var xver: Int = 0
+    public var serverNames: [String] = []
+    public var privateKey: String = ""
+    public var minClientVer: String = ""
+    public var maxClientVer: String = ""
+    public var shortIds: [String] = []
+    public var fingerprint: String = ""
+    public var serverName: String = ""
+    public var publicKey: String = ""
+    public var shortId: String = ""
+    public var spiderX: String = ""
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.show = try container.decode(Bool.self, forKey: .show)
+        self.target = try container.decode(String.self, forKey: .target)
+        self.xver = try container.decode(Int.self, forKey: .xver)
+        self.serverNames = try container.decode([String].self, forKey: .serverNames)
+        self.privateKey = try container.decode(String.self, forKey: .privateKey)
+        self.minClientVer = try container.decode(String.self, forKey: .minClientVer)
+        self.maxClientVer = try container.decode(String.self, forKey: .maxClientVer)
+        self.shortIds = try container.decode([String].self, forKey: .shortIds)
+        self.fingerprint = try container.decode(String.self, forKey: .fingerprint)
+        self.serverName = try container.decode(String.self, forKey: .serverName)
+        self.publicKey = try container.decode(String.self, forKey: .publicKey)
+        self.shortId = try container.decode(String.self, forKey: .shortId)
+        self.spiderX = try container.decode(String.self, forKey: .spiderX)
     }
     public init(){}
-  public init(from decoder: any Decoder) throws {
+}
+
+/// TLS settings for streams.
+@MemberwiseInit(.public)
+@frozen public struct TLSSettings: Codable {
+    public var serverName: String = ""
+    public var rejectUnknownSni: Bool = false
+    public var allowInsecure: Bool = false
+    public var alpn: [String] = []
+    public var minVersion: String = ""
+    public var maxVersion: String = ""
+    public var cipherSuites: String = ""
+    public var certificates: [String] = []
+    public var disableSystemRoot: Bool = false
+    public var enableSessionResumption: Bool = false
+    public var fingerprint: String = ""
+    public var pinnedPeerCertificateChainSha256: [String] = []
+    public var curvePreferences: [String] = []
+    public var masterKeyLog: String = ""
+    private enum CodingKeys: String, CodingKey {
+        case serverName, allowInsecure, alpn, fingerprint
+    }
+    public init(){}
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.serverName = try container.decodeIfPresent(String.self, forKey: .serverName) ?? ""
         self.allowInsecure = try container.decodeIfPresent(Bool.self, forKey: .allowInsecure) ?? false
         self.alpn = try container.decodeIfPresent([String].self, forKey: .alpn) ?? []
         self.fingerprint = try container.decodeIfPresent(String.self, forKey: .fingerprint) ?? ""
     }
-    
-  public func encode(to encoder: any Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if !alpn.isEmpty { try container.encode(alpn, forKey: .alpn) }
         if !serverName.isEmpty { try container.encode(serverName, forKey: .serverName) }
@@ -203,53 +199,49 @@ import SwiftUI
     }
 }
 
+/// WebSocket stream settings.
+@MemberwiseInit(.public)
 @frozen public struct WebSocketSettings: Codable {
-    var acceptProxyProtocol: Bool? = false
-    var path: String = ""
-    var host: String = ""
-    var headers: [String: String]? = [:]
-    var heartbeatPeriod: Int? = 10
-  
-  public init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.acceptProxyProtocol = try container
-      .decodeIfPresent(Bool.self, forKey: .acceptProxyProtocol)
-    self.path = try container.decode(String.self, forKey: .path)
-    self.host = try container.decode(String.self, forKey: .host)
-    self.headers = try container
-      .decodeIfPresent([String : String].self, forKey: .headers)
-    self.heartbeatPeriod = try container
-      .decodeIfPresent(Int.self, forKey: .heartbeatPeriod)
-  }
-  
-  public init(){}
-    
+    public var acceptProxyProtocol: Bool? = false
+    public var path: String = ""
+    public var host: String = ""
+    public var headers: [String: String]? = [:]
+    public var heartbeatPeriod: Int? = 10
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.acceptProxyProtocol = try container.decodeIfPresent(Bool.self, forKey: .acceptProxyProtocol)
+        self.path = try container.decode(String.self, forKey: .path)
+        self.host = try container.decode(String.self, forKey: .host)
+        self.headers = try container.decodeIfPresent([String : String].self, forKey: .headers)
+        self.heartbeatPeriod = try container.decodeIfPresent(Int.self, forKey: .heartbeatPeriod)
+    }
+    public init(){}
 }
 
+/// HTTP upgrade stream settings.
+@MemberwiseInit(.public)
 @frozen public struct HTTPUpgradeSettings: Codable {
-    var acceptProxyProtocol: Bool = false
-    var path: String = ""
-    var host: String = ""
-    var headers: [String: String] = [:]
-  
-  public init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.acceptProxyProtocol = try container
-      .decode(Bool.self, forKey: .acceptProxyProtocol)
-    self.path = try container.decode(String.self, forKey: .path)
-    self.host = try container.decode(String.self, forKey: .host)
-    self.headers = try container
-      .decode([String : String].self, forKey: .headers)
-  }
-  
-  public init(){}
+    public var acceptProxyProtocol: Bool = false
+    public var path: String = ""
+    public var host: String = ""
+    public var headers: [String: String] = [:]
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.acceptProxyProtocol = try container.decode(Bool.self, forKey: .acceptProxyProtocol)
+        self.path = try container.decode(String.self, forKey: .path)
+        self.host = try container.decode(String.self, forKey: .host)
+        self.headers = try container.decode([String : String].self, forKey: .headers)
+    }
+    public init(){}
 }
 
+/// Multiplexing settings for streams.
+@MemberwiseInit(.public)
 @frozen public struct MuxSettings {
-    var enable: Bool = false
-    var concurrency: Int = 8
-    var xudpConcurrency: Int = 16
-    var xudpProxyUDP443: String = "reject"
+    public var enable: Bool = false
+    public var concurrency: Int = 8
+    public var xudpConcurrency: Int = 16
+    public var xudpProxyUDP443: String = "reject"
 }
 
 extension Config: FileDocument {

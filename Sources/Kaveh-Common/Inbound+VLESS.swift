@@ -1,22 +1,28 @@
-
 import SwiftUI
+import MemberwiseInit
 
+/// Settings for VLESS inbound protocol.
+@MemberwiseInit(.public)
 @frozen public struct InboundVLESSSettings: Codable {
-    var decryption: String = ""
-    var clients: [InboundVLESSClient] = []
-    var fallbacks: [InboundVLESSFallback]?
+    public var decryption: String = ""
+    public var clients: [InboundVLESSClient] = []
+    public var fallbacks: [InboundVLESSFallback]?
 }
 
+/// VLESS client settings.
+@MemberwiseInit(.public)
 @frozen public struct InboundVLESSClient: Codable {
-    var id: String
-    var level: Int
-    var email: String?
-    var flow: String?
+    public var id: String
+    public var level: Int
+    public var email: String?
+    public var flow: String?
 }
 
+/// VLESS fallback settings.
+@MemberwiseInit(.public)
 @frozen public struct InboundVLESSFallback: Codable {
-    var dest: Int
-    var xver: Int?
-    var alpn: String?
-    var path: String?
+    public var dest: Int
+    public var xver: Int?
+    public var alpn: String?
+    public var path: String?
 }
