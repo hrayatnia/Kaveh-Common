@@ -122,6 +122,8 @@ public enum HostMapping: Codable {
         case disableCache, disableFallback
         case disableFallbackIfMatch, tag
     }
+  
+  public init(){}
 }
 
 public extension DNS {
